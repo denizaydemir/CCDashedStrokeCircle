@@ -1,5 +1,5 @@
 //
-//  Test2.swift
+//  CCDashedStrokeCircle.swift
 //  Blindstory
 //
 //  Created by Deniz Aydemir on 10.09.2024.
@@ -12,39 +12,39 @@ struct CCDashedStrokeCircle: View {
 //    let strokeCount: Int
     let gapDegrees: Double  // Customize the gap between segments
 //    let customColors: [Int: Color]
-    let isWatchedDict: [Int: Bool]
+    let isWatchedList: [Bool]
     let innerCircleSize: CGFloat
     let innerOuterCircleGap: CGFloat
     
    
     
     
-    init(/*strokeCount: Int, */isWatchedDict: [Int: Bool], innerCircleSize: CGFloat, innerOuterCircleGap: CGFloat) {
+    init(/*strokeCount: Int, */isWatchedList: [Bool], innerCircleSize: CGFloat, innerOuterCircleGap: CGFloat) {
 //        self.strokeCount = strokeCount
-        self.isWatchedDict = isWatchedDict
-        self.gapDegrees = CCDashedStrokeCircle.calculateDashGap(count: isWatchedDict.count)
+        self.isWatchedList = isWatchedList
+        self.gapDegrees = CCDashedStrokeCircle.calculateDashGap(count: isWatchedList.count)
         self.innerCircleSize = innerCircleSize
         self.innerOuterCircleGap = innerOuterCircleGap
     }
     
     var body: some View {
-        if isWatchedDict.count == 1 {
-            if let mIsWatched = isWatchedDict[0], mIsWatched {
-                SegmentView(strokeCount: isWatchedDict.count, gapDegrees: gapDegrees)
+        if isWatchedList.count == 1 {
+            if isWatchedList[0] {
+                SegmentView(strokeCount: isWatchedList.count, gapDegrees: gapDegrees)
                     .stroke(Color.gray, style: StrokeStyle(lineWidth: 3.34, lineCap: .round, lineJoin: .round))
                     .frame(width: innerCircleSize + innerOuterCircleGap, height: innerCircleSize + innerOuterCircleGap)
             } else {
-                SegmentView(strokeCount: isWatchedDict.count, gapDegrees: gapDegrees)
+                SegmentView(strokeCount: isWatchedList.count, gapDegrees: gapDegrees)
                     .stroke(RadialGradient(gradient: Gradient(colors: [CustomColor.radialGradient1, CustomColor.radialGradient2, CustomColor.radialGradient3]), center: .topLeading, startRadius: 0, endRadius: 130),style: StrokeStyle(lineWidth: 3.34, lineCap: .round, lineJoin: .round))
                     .frame(width: innerCircleSize + innerOuterCircleGap, height: innerCircleSize + innerOuterCircleGap)
             }
         } else {
             ZStack {
-                ForEach(0..<isWatchedDict.count, id: \.self) { index in
-                    SegmentView(strokeCount: isWatchedDict.count, gapDegrees: gapDegrees)
+                ForEach(0..<isWatchedList.count, id: \.self) { index in
+                    SegmentView(strokeCount: isWatchedList.count, gapDegrees: gapDegrees)
                     
                         .stroke(style: StrokeStyle(lineWidth: 3.34, lineCap: .round, lineJoin: .round))
-                        .rotationEffect(.degrees(Double(index) * (360.0 / Double(isWatchedDict.count))))
+                        .rotationEffect(.degrees(Double(index) * (360.0 / Double(isWatchedList.count))))
                         .foregroundStyle(colorForSegment(index: index))
 //                        .foregroundStyle(Color.red)
 
@@ -66,23 +66,17 @@ struct CCDashedStrokeCircle: View {
             .rotationEffect(.degrees(273))
             .frame(width: innerCircleSize + innerOuterCircleGap, height: innerCircleSize + innerOuterCircleGap)
         }
-        
     }
     
-    
-    
-    
     func colorForSegment(index: Int) -> Color {
-        if let mIsWatched = isWatchedDict[index], mIsWatched {
+        if isWatchedList[index] {
             return Color.gray
         } else {
-            let colorProgress = (Double(index) / Double(isWatchedDict.count)) + (1 / Double(2 * isWatchedDict.count)) // Center of the segment
+            let colorProgress = (Double(index) / Double(isWatchedList.count)) + (1 / Double(2 * isWatchedList.count)) // Center of the segment
             let segmentColor = UIColor.interpolateGradientColors(colorStops: CustomColor.circularColorStops, progress: CGFloat(colorProgress))
             return Color(segmentColor)
         }
     }
-    
-    
     
     private static func calculateDashGap(count: Int) -> Double {
         if count > 70 {
@@ -93,8 +87,6 @@ struct CCDashedStrokeCircle: View {
             return 6
         }
     }
-    
-    
 }
 
 extension UIColor {
@@ -144,5 +136,5 @@ struct SegmentView: Shape {
 }
 
 #Preview {
-    CCDashedStrokeCircle(/*strokeCount: 2, */isWatchedDict: [0: true, 1: false,2:false], innerCircleSize: 78, innerOuterCircleGap: 4)
+    CCDashedStrokeCircle(/*strokeCount: 2, */isWatchedList: [true,false,false], innerCircleSize: 78, innerOuterCircleGap: 4)
 }
